@@ -119,6 +119,26 @@ class Colour{
 			return new Colour(result);
 		}
 	}
+	
+	static invert(colour){
+		let rgba = colour.getRGBA();
+		return new this({
+			type: "RGBA",
+			R: 255 - rgba.R,
+			G: 255 - rgba.G,
+			B: 255 - rgba.B,
+			A: rgba.A,
+		});
+	}
+
+	invert(){
+		this.#RGBA = Colour.invert(this).getRGBA();
+		return this;
+	}
+
+	toString(){
+		return this.getRGBCode();
+	}
 
 	getRGBA(){
 		return this.#RGBA;
