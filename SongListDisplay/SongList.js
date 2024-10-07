@@ -1,4 +1,4 @@
-import { SongData } from "./SongData";
+import { SongData } from "./SongData.js";
 
 export class SongList{
 	#position;
