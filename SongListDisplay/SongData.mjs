@@ -60,6 +60,6 @@ export class SongData{
 	}
 }
 
-SongList.prototype.valueOf = function(){
+SongData.prototype.valueOf = function(){
 	return this.toPrototypeObject();
 }
