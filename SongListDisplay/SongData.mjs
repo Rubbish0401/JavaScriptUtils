@@ -11,7 +11,7 @@ export class SongData{
 	
 
 	constructor(obj){
-		if(obj == null){
+		if(obj != null){
 			if(obj.hasOwnProperty("title")) this.#title = obj["title"];
 			if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
 			if(obj.hasOwnProperty("creators")) for(key in obj["creators"]) this.#creators[key] = obj["creators"][key];
@@ -58,4 +58,8 @@ export class SongData{
 	removeCreators(key, ...creators){
 		return this.#creators[key].filter(value => creators.indexOf(value));
 	}
+}
+
+SongList.prototype.valueOf = function(){
+	return this.toPrototypeObject();
 }
