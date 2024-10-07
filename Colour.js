@@ -39,7 +39,9 @@
 	}
 */
 
-class Colour{
+import StringProcess from "./StringProcess.js";
+
+export class Colour{
 	#RGBA = {
 		R: null,
 		G: null,

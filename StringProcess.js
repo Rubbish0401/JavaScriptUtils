@@ -1,4 +1,4 @@
-class StringProcess{
+export class StringProcess{
 	static repeat(str, times){
 		if(times == 0) return "";
 		else if(times > 0){

@@ -1,4 +1,4 @@
-function delay(duration, func){
+export function delay(duration, func){
     return new Promise(resolve => {
         setTimeout(() => {
             if(func) func();
@@ -7,7 +7,7 @@ function delay(duration, func){
     });
 }
 
-function downloadByUrl(url, filename){
+export function downloadByUrl(url, filename){
 	if(!(filename.length > 0)){
 		let now = new Date();
 		filename = [
