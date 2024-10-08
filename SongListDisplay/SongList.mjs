@@ -22,9 +22,10 @@ export class SongList{
 
 	/* Conovert */
 	toObject(){
+		let self = this;
 		return {
 			"startAt": this.#startAt,
-			"list": [...(function* (){ for(let i = 0; i < this.getLength(); i++) yield this.get(i).toObject() })()],
+			"list": [...(function* (){ for(let i = 0; i < self.length; i++) yield self.get(i).toObject() })()],
 		}
 	}
 
