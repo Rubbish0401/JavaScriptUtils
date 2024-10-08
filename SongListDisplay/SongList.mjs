@@ -24,7 +24,7 @@ export class SongList{
 	toObject(){
 		return {
 			"startAt": this.#startAt,
-			"list": [...(function* (){ for(let i = 0; i < this.length; i++) yield this.get(i).toObject() })()],
+			"list": [...(function* (){ for(let i = 0; i < this.getLength(); i++) yield this.get(i).toObject() })()],
 		}
 	}
 
