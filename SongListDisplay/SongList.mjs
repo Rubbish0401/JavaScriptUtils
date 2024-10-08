@@ -51,6 +51,10 @@ export class SongList{
 		}
 	}
 
+	isInRange(pos){
+		return this.getInRangeSign(pos) == 0;
+ 	}
+
 	getLength(){
 		return this.#songs.length;
 	}
@@ -67,7 +71,7 @@ export class SongList{
 	}
 
 	getSongData(pos = this.getPosition()){
-		return this.getInRangeSign(pos) == 0 ? this.#songs[parseInt(pos)] : null;
+		return this.isInRange(pos) ? this.#songs[parseInt(pos)] : null;
 	}
 
 	setSongData(pos, songdata){
@@ -76,6 +80,10 @@ export class SongList{
 			pos = [0, parseInt(pos), this.getLength() - 1][1 + this.getInRangeSign(pos)];
 			this.#songs[pos] = songdata;
 		}
+	}
+
+	set(pos, songdata){
+		this.setSongData(pos, songdata);
 	}
 
 	addSongData(pos = this.getLength(), ...songdatas){
@@ -92,5 +100,17 @@ export class SongList{
 				...this.#songs.slice(pos)
 			];
 		}
+	}
+
+	removeSongData(pos){
+		if(this.isInRange(pos)){
+			this.#songs = [...this.#songs.slice(0, parseInt(pos)), ...this.#songs.slice(parseInt(pos) + 1)];
+			return true;
+		}
+		return false;
+	}
+
+	remove(pos){
+		return this.removeSongData(pos);
 	}
 }
