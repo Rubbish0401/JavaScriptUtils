@@ -5,7 +5,7 @@ export class SongList{
 	#songs = [];
 
 	constructor(list, startAt = 0){
-		this.addSongData(0, list);
+		this.addSongData(0, ...list);
 		this.setPosition(startAt);
 	}
 

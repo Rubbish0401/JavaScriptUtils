@@ -12,13 +12,21 @@ export class SongData{
 
 	constructor(obj){
 		if(obj != null){
-			if(obj.hasOwnProperty("title")) this.#title = obj["title"];
-			if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
-			if(obj.hasOwnProperty("creators")) for(key in obj["creators"]) this.#creators[key] = obj["creators"][key];
+			if(obj instanceof this){
+				this(obj.toPrototypeObject());
+			}else{
+				if(obj.hasOwnProperty("title")) this.#title = obj["title"];
+				if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
+				if(obj.hasOwnProperty("creators")) for(key in obj["creators"]) this.#creators[key] = obj["creators"][key];
+			}
 		}
 	}
 
 	/* Static methods */
+	static *bulkConstructor(list){
+		for(obj of list) yield list;
+	}
+
 
 	/* methods to just get or modify parameters */
 
