@@ -13,7 +13,7 @@ export class SongData{
 	constructor(obj){
 		if(obj != null){
 			if(obj instanceof SongData){
-				this(obj.toPrototypeObject());
+				this(obj.toObject());
 			}else{
 				if(obj.hasOwnProperty("title")) this.#title = obj["title"];
 				if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
@@ -30,7 +30,7 @@ export class SongData{
 
 	/* methods to just get or modify parameters */
 
-	toPrototypeObject(){
+	toObject(){
 		return {
 			"title": this.#title,
 			"descriptions": this.#descriptions,
@@ -69,5 +69,5 @@ export class SongData{
 }
 
 SongData.prototype.valueOf = function(){
-	return this.toPrototypeObject();
+	return this.toObject();
 }

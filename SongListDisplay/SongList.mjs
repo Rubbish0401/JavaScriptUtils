@@ -1,12 +1,31 @@
 import { SongData } from "./SongData.mjs";
 
 export class SongList{
+	#startAt;
 	#position;
 	#songs = [];
 
 	constructor(list, startAt = 0){
+		this.#startAt = startAt;
 		this.addSongData(0, ...list);
 		this.setPosition(startAt);
+	}
+
+	/* getter */
+	get length(){
+		return this.getLength();
+	}
+
+	get position(){
+		return this.getPosition();
+	}
+
+	/* Conovert */
+	toObject(){
+		return {
+			"startAt": this.startAt,
+			"list": [...(function* (){ for(let i = 0; i < this.length; i++) yield this.get(i).toObject() })()],
+		}
 	}
 
 	/* methods to just get or modify parameters */
@@ -41,6 +60,10 @@ export class SongList{
 	}
 
 	/* Songs */
+
+	get(pos = this.getPosition()){
+		return this.getSongData(pos);
+	}
 
 	getSongData(pos = this.getPosition()){
 		return this.getInRangeSign(pos) == 0 ? this.#songs[parseInt(pos)] : null;
