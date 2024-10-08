@@ -7,7 +7,7 @@ export class SongList{
 
 	constructor(list, startAt = 0){
 		this.#startAt = startAt;
-		this.addSongData(0, ...list);
+		if(list != null) this.addSongData(0, ...list);
 		this.setPosition(startAt);
 	}
 
