@@ -23,7 +23,7 @@ export class SongList{
 	/* Conovert */
 	toObject(){
 		return {
-			"startAt": this.startAt,
+			"startAt": this.#startAt,
 			"list": [...(function* (){ for(let i = 0; i < this.length; i++) yield this.get(i).toObject() })()],
 		}
 	}
