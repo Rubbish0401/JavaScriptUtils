@@ -24,7 +24,7 @@ export class SongData{
 
 	/* Static methods */
 	static *bulkConstructor(list){
-		for(key in list) yield new this(list[key]);
+		for(let i = 0; i < list.length; i++) yield new this(list[i]);
 	}
 
 
