@@ -12,7 +12,7 @@ export class SongData{
 
 	constructor(obj){
 		if(obj != null){
-			if(obj instanceof this){
+			if(obj instanceof SongData){
 				this(obj.toPrototypeObject());
 			}else{
 				if(obj.hasOwnProperty("title")) this.#title = obj["title"];
