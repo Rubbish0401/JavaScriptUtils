@@ -1,23 +1,25 @@
-export function delay(duration, func){
-    return new Promise(resolve => {
-        setTimeout(() => {
-            if(func) func();
-            resolve();
-        }, duration);
-    });
+import { StringProcess } from "./StringProcess.mjs";
+
+export function delay(duration, func) {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			if (func) func();
+			resolve();
+		}, duration);
+	});
 }
 
-export function downloadByUrl(url, filename){
-	if(!(filename.length > 0)){
+export function downloadByUrl(url, filename) {
+	if (!(filename.length > 0)) {
 		let now = new Date();
 		filename = [
-			now.getFullYear(),
-			now.getMonth() + 1,
-			now.getDate(),
-			now.getHours(),
-			now.getMinutes(),
-			now.getSeconds(),
-			now.getMilliseconds()
+			StringProcess.fillChars(String(now.getFullYear()), 4, "0"),
+			StringProcess.fillChars(String(now.getMonth() + 1), 2, "0"),
+			StringProcess.fillChars(String(now.getDate()), 2, "0"),
+			StringProcess.fillChars(String(now.getHours()), 2, "0"),
+			StringProcess.fillChars(String(now.getMinutes()), 2, "0"),
+			StringProcess.fillChars(String(now.getSeconds()), 2, "0"),
+			StringProcess.fillChars(String(now.getMilliseconds()), 3, "0"),
 		].join("");
 	}
 
