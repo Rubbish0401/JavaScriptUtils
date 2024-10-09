@@ -27,6 +27,17 @@ export class SongData{
 		for(let i = 0; i < list.length; i++) yield new this(list[i]);
 	}
 
+	/* getters and settes */
+
+	get title(){
+		return this.getTitle();
+	}
+	set title(title){}
+
+	get descriptions(){
+		return this.getDescriptions();
+	}
+	set descriptions(descriptions){}
 
 	/* methods to just get or modify parameters */
 
