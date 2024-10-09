@@ -11,13 +11,21 @@ export class SongList{
 		this.setPosition(startAt);
 	}
 
-	/* getter */
+	/* getter and setter*/
 	get length(){
 		return this.getLength();
 	}
 
+	set length(length){
+		
+	}
+
 	get position(){
 		return this.getPosition();
+	}
+
+	set position(pos){
+		return this.setPosition(pos);
 	}
 
 	/* Conovert */
