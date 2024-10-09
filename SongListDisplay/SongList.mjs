@@ -39,7 +39,7 @@ export class SongList{
 		if(this.getInRangeSign(pos) == null) throw new Error(`${pos} is not a number. Position must be an integer equals to or be larger than 0.`);
 		else this.#position = [0, parseInt(pos), this.getLength() - 1][1 + this.getInRangeSign(pos)];
 
-		return this.getPosition();
+		return this.get(this.getPosition());
 	}
 
 	getInRangeSign(pos){
