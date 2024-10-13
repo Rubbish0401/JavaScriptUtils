@@ -45,7 +45,7 @@ export class SongList{
 
 	setPosition(pos){
 		if(this.getInRangeSign(pos) == null) throw new Error(`${pos} is not a number. Position must be an integer equals to or be larger than 0.`);
-		else this.#position = [0, parseInt(pos), this.getLength() - 1][1 + this.getInRangeSign(pos)];
+		else this.#position = [0, parseInt(pos), Math.max(0, this.getLength() - 1)][1 + this.getInRangeSign(pos)];
 
 		return this.get(this.getPosition());
 	}
@@ -110,12 +110,17 @@ export class SongList{
 		}
 	}
 
+	add(pos = this.getLength(), ...songdatas){
+		this.addSongData(pos, ...songdatas);
+	}
+
 	removeSongData(pos){
 		if(this.isInRange(pos)){
+			let target = this.get(parseInt(pos));
 			this.#songs = [...this.#songs.slice(0, parseInt(pos)), ...this.#songs.slice(parseInt(pos) + 1)];
-			return true;
+			return target;
 		}
-		return false;
+		return null;
 	}
 
 	remove(pos){
