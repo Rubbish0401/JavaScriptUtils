@@ -44,7 +44,7 @@ export class SongList{
 		}
 	}
 
-	parse(obj){
+	static parse(obj){
 		return new SongList(obj["list"], obj["startAt"], obj["name"]);
 	}
 
