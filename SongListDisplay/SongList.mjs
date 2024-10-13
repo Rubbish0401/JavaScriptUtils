@@ -44,6 +44,14 @@ export class SongList{
 	}
 
 	/* methods to just get or modify parameters */
+
+	getName(){
+		return this.#name;
+	}
+
+	setName(name){
+		if(name && name.length > 0) this.#name = name;
+	}
 	
 	getPosition(){
 		return this.#position;
