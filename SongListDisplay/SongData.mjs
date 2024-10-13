@@ -17,7 +17,7 @@ export class SongData{
 			}else{
 				if(obj.hasOwnProperty("title")) this.#title = obj["title"];
 				if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
-				if(obj.hasOwnProperty("creators")) for(let i = 0; i < Object.keys(obj["creators"]).length; i++) this.#creators[Object.keys(obj["creators"])[i]] = obj["creators"][key];
+				if(obj.hasOwnProperty("creators")) this.#creators = obj["creators"];
 			}
 		}
 	}
