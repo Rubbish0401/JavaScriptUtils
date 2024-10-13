@@ -11,8 +11,8 @@ export class SongList{
 	constructor(list, startAt = 0, name = `New SongList ${count}`){
 		this.#name = name;
 		this.#startAt = startAt;
-		if(list != null) this.addSongData(0, ...list);
-		this.setPosition(startAt);
+		if(list != null) this.addSongData(0, ...list.filter(value => value instanceof SongData));
+		this.setPosition(this.#startAt);
 
 		count++;
 	}
