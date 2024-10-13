@@ -38,9 +38,14 @@ export class SongList{
 	toObject(){
 		let self = this;
 		return {
+			"name": this.#name,
 			"startAt": this.#startAt,
 			"list": [...(function* (){ for(let i = 0; i < self.length; i++) yield self.get(i).toObject() })()],
 		}
+	}
+
+	parse(obj){
+		return new SongList(obj["list"], obj["startAt"], obj["name"]);
 	}
 
 	/* methods to just get or modify parameters */
