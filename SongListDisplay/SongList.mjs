@@ -1,14 +1,20 @@
 import { SongData } from "./SongData.mjs";
 
+var count = 0;
+
 export class SongList{
+	#name;
 	#startAt;
 	#position;
 	#songs = [];
 
-	constructor(list, startAt = 0){
+	constructor(list, startAt = 0, name = `New SongList ${count}`){
+		this.#name = name;
 		this.#startAt = startAt;
 		if(list != null) this.addSongData(0, ...list);
 		this.setPosition(startAt);
+
+		count++;
 	}
 
 	/* getter and setter*/
