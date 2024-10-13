@@ -45,7 +45,7 @@ export class SongList{
 	}
 
 	static parse(obj){
-		return new SongList(obj["list"], obj["startAt"], obj["name"]);
+		return new SongList([...(function* (){ for(let i = 0; i < obj["list"].length; i++) yield new SongData(obj["list"][i]) })()], obj["startAt"], obj["name"]);
 	}
 
 	/* methods to just get or modify parameters */
@@ -115,11 +115,11 @@ export class SongList{
 
 	addSongData(pos = this.getLength(), ...songdatas){
 		let sign = this.getInRangeSign(pos);
-		songdatas.filter(value => value instanceof SongData,);
+		songdatas.filter(value => value instanceof SongData);
 		
 		if(sign != null){
 			if(sign == -1) pos = 0;
-			else if(sign == 1 && pos > this.getLength()) pos = this.getLength();
+			else if(sign == 1) pos = this.getLength();
 
 			this.#songs = [
 				...this.#songs.slice(0, pos),
