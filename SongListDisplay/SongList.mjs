@@ -45,7 +45,7 @@ export class SongList{
 	}
 
 	static parse(obj){
-		return new SongList([...(function* (){ for(let i = 0; i < obj["list"].length; i++) yield new SongData(obj["list"][i]) })()], obj["startAt"], obj["name"]);
+		return typeof obj == "object" ? new SongList([...(function* (){ for(let i = 0; i < obj["list"].length; i++) yield new SongData(obj["list"][i]) })()], obj["startAt"], obj["name"]) : null;
 	}
 
 	/* methods to just get or modify parameters */
