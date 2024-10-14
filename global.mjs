@@ -29,3 +29,13 @@ export function downloadByUrl(url, filename) {
 	anchor.click();
 	anchor.remove();
 }
+
+export function range(n){
+	return [...(function*(){
+		for(let i = 0; i < n; i++) yield i;
+	})()];
+}
+
+export function wait(duration){
+	return delay(duration, null);
+}
