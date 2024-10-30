@@ -9,38 +9,27 @@ export class SongData{
 		publisher: [],
 	};
 	
+	//
+
+	#listener = {
+		"global": [],
+		"import": [],
+		"title-change": [],
+		"descriptions-change": [],
+		"creators-change": [],
+	};
+
+	//
 
 	constructor(obj){
-		if(obj != null){
-			if(obj instanceof SongData){
-				this(obj.toObject());
-			}else{
-				if(obj.hasOwnProperty("title")) this.#title = obj["title"];
-				if(obj.hasOwnProperty("descriptions")) this.#descriptions = obj["descriptions"];
-				if(obj.hasOwnProperty("creators")) this.#creators = obj["creators"];
-			}
-		}
+		if(obj instanceof SongData) obj = obj.toObject();
+		this.import(obj);
 	}
 
 	/* Static methods */
-	static *bulkConstructor(list){
-		for(let i = 0; i < list.length; i++) yield new this(list[i]);
-	}
+	static *bulkConstructor(list){ for(let i = 0; i < list.length; i++) yield new SongData(list[i]); }
 
-	/* getters and settes */
-
-	get title(){
-		return this.getTitle();
-	}
-	set title(title){}
-
-	get descriptions(){
-		return this.getDescriptions();
-	}
-	set descriptions(descriptions){}
-
-	/* methods to just get or modify parameters */
-
+	/* */
 	toObject(){
 		return {
 			"title": this.#title,
@@ -49,33 +38,105 @@ export class SongData{
 		}
 	}
 
-	getTitle(){
-		return this.#title;
+	importObject(obj){
+		let before = this.toObject();
+
+		if(typeof obj === "object"){
+			switch(true){
+				case typeof obj.title === "string":
+					this.#title = obj.title;
+					break;
+				
+				case typeof obj.descriptions === "string":
+					this.#descriptions = obj.descriptions;
+					break;
+				
+				case typeof obj.creators === "object":
+					this.#creators = obj.creators.filter(value => typeof value === "string");
+					break;
+			}
+
+			let after = this.toObject();
+			for(let action of this.#listener["import"]) action({ target: this, before: before, after: after });
+			for(let action of this.#listener["global"]) action({ target: this });
+		}
 	}
+
+	/* getters and settes */
+
+	get title(){ return this.getTitle(); }
+	get descriptions(){ return this.getDescriptions(); }
+	
+	set title(title){}
+	set descriptions(descriptions){}
+
+	/* methods to just get or modify parameters */
+
+	getTitle(){ return this.#title; }
+	getDescriptions(){ return this.#descriptions; }
+	getCreators(key){ return this.#creators.hasOwnProperty(key) ? this.#creators[key] : this.#creators; }
 
 	setTitle(title){
-		this.#title = title;
-	}
+		let before = this.getTitle();
+		this.importObject({ title: title });
 
-	getDescriptions(){
-		return this.#descriptions;
+		let after = this.getTitle();
+		for(let action of this.#listener["title-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
 	setDescriptions(descriptions){
-		this.#descriptions = descriptions;
-	}
+		let before = this.getDescriptions();
+		this.importObject({ descriptions: descriptions });
 
-	getCreators(key){
-		return this.#creators.hasOwnProperty(key) ? this.#creators[key] : this.#creators;
+		let after = this.getDescriptions();
+		for(let action of this.#listener["descriptions-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
 	addCreators(key, ...creators){
-		if(!this.#creators.hasOwnProperty(key)) this.#creators[key] = [];
-		this.#creators[key].push(...creators);
+		let before = this.getCreators();
+
+		let copy = JSON.parse(JSON.stringify(before));
+		if(!copy.hasOwnProperty(key)) copy[key] = [];
+		copy[key].push(...creators);
+		this.importObject({ creators: copy });
+
+		let after = this.getCreators();
+		for(let action of this.#listener["creators-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
 	removeCreators(key, ...creators){
-		return this.#creators[key].filter(value => creators.indexOf(value));
+		let before = this.getCreators();
+
+		let copy = JSON.parse(JSON.stringify(before));
+		if(copy.hasOwnProperty(key)) copy = copy.filter(value => !creators.includes(value));
+		this.importObject({ creators: copy });
+
+		let after = this.getCreators();
+		for(let action of this.#listener["creators-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
+	}
+
+	//
+
+	addEventListener(key, ...actions){
+		if(Object.keys(this.#listener).includes(key)) this.#listener[key].push(...actions.filter(value => typeof value === "function"));
+	}
+
+	removeEventListener(key, ...actions){
+		if(Object.keys(this.#listener).includes(key)) {
+				for(let action of actions) if(Object.keys(this.#listener[key]).includes(action)){
+					let index = this.#listener[key].indexOf(action);
+					this.#listener[key].splice(index, 1);
+				}
+		}
+	}
+
+	clearEventListener(key){
+		if(Object.keys(this.#listener).includes(key))
+			this.#listener[key] = [];
 	}
 }
 

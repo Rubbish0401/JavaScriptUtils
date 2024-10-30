@@ -3,146 +3,160 @@ import { SongData } from "./SongData.mjs";
 var count = 0;
 
 export class SongList{
-	#name;
-	#startAt;
-	#position;
+	#name = "SongList";
+	#startAt = 0;
+	#position = 0;
 	#songs = [];
 
-	constructor(list, startAt = 0, name = `New SongList ${count}`){
-		this.#name = name;
-		this.#startAt = startAt;
-		if(list != null) this.addSongData(0, ...list.filter(value => value instanceof SongData));
+	//
+
+	#listener = {
+		"global": [],
+		"import": [],
+		"name-change": [],
+		"position-change": [],
+		"songs-change": [],
+		"songs-add": [],
+		"songs-remove": [],
+		"song-change": [],
+	};
+
+	//
+
+	constructor(obj){
+		if(obj instanceof SongList) obj = obj.toObject();
+		if(!isNaN(obj.startAt)) this.#startAt = obj.startAt;
+		this.importObject(obj);
 		this.setPosition(this.#startAt);
 
 		count++;
 	}
 
-	/* getter and setter*/
-	get length(){
-		return this.getLength();
-	}
-
-	set length(length){
-		
-	}
-
-	get position(){
-		return this.getPosition();
-	}
-
-	set position(pos){
-		return this.setPosition(pos);
-	}
-
-	/* Conovert */
+	//
 	toObject(){
 		let self = this;
 		return {
-			"name": this.#name,
-			"startAt": this.#startAt,
-			"list": [...(function* (){ for(let i = 0; i < self.length; i++) yield self.get(i).toObject() })()],
+			name: this.#name,
+			startAt: this.#startAt,
+			list: [...(function* (){ for(let i = 0; i < self.length; i++) yield self.get(i).toObject() })()],
 		}
 	}
 
-	static parse(obj){
-		return typeof obj == "object" ? new SongList([...(function* (){ for(let i = 0; i < obj["list"].length; i++) yield new SongData(obj["list"][i]) })()], obj["startAt"], obj["name"]) : null;
+	importObject(obj){
+		let before = this.toObject();
+		if(typeof obj === "object"){
+			switch(true){
+				case typeof obj.name === "string":
+					this.#name = obj.name;
+					break;
+				
+				case !isNaN(obj.postiion):
+					if(obj.pos >= 0 && obj < this.getLength()) this.#position = Math.floor(obj.position);
+					break;
+				
+				case typeof obj.list === "object":
+					this.#songs = [...(function*(){ for(let songObj of obj) yield new SongData(songObj) })()];
+					break;
+	
+				case typeof obj.songs === "object":
+					this.#songs = obj.songs.filter(value => value instanceof SongData);
+					break;
+			}
+
+			let after = this.toObject();
+			for(let action of this.#listener["import"]) action({ target: this, before: before, after: after });
+			for(let action of this.#listener["global"]) action({ target: this });
+		}
 	}
+
+	/* getter and setter*/
+	get length(){ return this.getLength(); }
+	get position(){ return this.getPosition(); }
+
+	set length(length){}
+	set position(pos){ return this.setPosition(pos); }
 
 	/* methods to just get or modify parameters */
 
-	getName(){
-		return this.#name;
-	}
+	getName(){ return this.#name; }
+	getPosition(){ return this.#position; }
+	getLength(){ return this.#songs.length; }
 
 	setName(name){
-		if(name && name.length > 0) this.#name = name;
-	}
-	
-	getPosition(){
-		return this.#position;
+		let before = this.getName();
+		this.importObject({ name: name });
+
+		let after = this.getName();
+		for(let action of this.#listener["name-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
 	setPosition(pos){
-		if(this.getInRangeSign(pos) == null) throw new Error(`${pos} is not a number. Position must be an integer equals to or be larger than 0.`);
-		else this.#position = [0, parseInt(pos), Math.max(0, this.getLength() - 1)][1 + this.getInRangeSign(pos)];
-
-		return this.get(this.getPosition());
+		let before = this.getPosition();
+		this.importObject({ position: pos });
+		
+		let after = this.getPosition();
+		for(let action of this.#listener["global"]) action({ target: this });
+		for(let action of this.#listener["position-change"]) action({ target: this, before: before, after: after });
 	}
 
-	getInRangeSign(pos){
-		if(isNaN(pos)) return null;
-		else{
-			if(pos < 0) return -1
-			else if(pos > this.getLength() - 1) return 1
-			else return 0;
-		}
-	}
-
-	isInRange(pos){
-		return this.getInRangeSign(pos) == 0;
- 	}
-
-	getLength(){
-		return this.#songs.length;
-	}
-
-	getTitleList(){
-		let result = [];
-		for(let i = 0; i < this.getLength(); i++) result += this.#songs[i].getTitle();
-	}
+	*getTitleList(){ for(let song of this.#songs) yield song.getTitle(); }
 
 	/* Songs */
 
-	get(pos = this.getPosition()){
-		return this.getSongData(pos);
-	}
+	get(pos = this.getPosition()){ return this.getSongData(pos); }
+	getSongData(pos = this.getPosition()){ return this.#songs[parseInt(pos)]; }
+	getAll(){ return this.getAllSongs() }
+	getAllSongs(){ return [...this.#songs]; }
 
-	getSongData(pos = this.getPosition()){
-		return this.isInRange(pos) ? this.#songs[parseInt(pos)] : null;
-	}
+	set(pos, songdata){ this.setSongData(pos, songdata); }
+	add(pos = this.getLength(), ...songdata){ this.addSongData(pos, ...songdata); }
+	remove(pos){ return this.removeSongData(pos); }
 
 	setSongData(pos, songdata){
-		let sign = this.getInRangeSign(pos);
-		if(songdata instanceof SongData && sign != null){
-			pos = [0, parseInt(pos), this.getLength() - 1][1 + this.getInRangeSign(pos)];
-			this.#songs[pos] = songdata;
-		}
+		let before = this.getSongData(pos), beforeAll = this.getAllSongs();
+
+		let copy = [...beforeAll];
+		if(songdata instanceof SongData && pos >= 0 && pos < this.getLength()) copy[Math.floor(pos)] = songdata;
+		this.importObject({ songs: copy });
+
+		let after = this.getSongData(pos), afterAll = this.getAllSongs();
+		for(let action of this.#listener["song-change"]) action({ target: this, position: Math.floor(pos), before: before, after: after });
+		for(let action of this.#listener["songs-change"]) action({ target: this, before: beforeAll, after: afterAll });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
-	set(pos, songdata){
-		this.setSongData(pos, songdata);
-	}
+	addSongData(pos = this.getLength(), ...songdata){
+		let before = this.getAllSongs();
 
-	addSongData(pos = this.getLength(), ...songdatas){
-		let sign = this.getInRangeSign(pos);
-		songdatas.filter(value => value instanceof SongData);
+		let copy = [...before];
+		copy = [
+			...copy.slice(0, pos),
+			...songdata,
+			...this.#songs.slice(pos)
+		];
+
+		let after = this.getAllSongs();
+		for(let action of this.#listener["songs-add"]) action({ target: this, before: before, after: after });
 		
-		if(sign != null){
-			if(sign == -1) pos = 0;
-			else if(sign == 1) pos = this.getLength();
+		if(!isNaN(pos)){
+			pos = Math.floor(pos);
+			if(pos < 0) pos = 0;
+			else if(pos > this.getLength()) pos = this.getLength();
 
 			this.#songs = [
 				...this.#songs.slice(0, pos),
-				...songdatas,
+				...songdata,
 				...this.#songs.slice(pos)
 			];
 		}
 	}
 
-	add(pos = this.getLength(), ...songdatas){
-		this.addSongData(pos, ...songdatas);
-	}
-
 	removeSongData(pos){
-		if(this.isInRange(pos)){
+		if(pos >= 0 && pos < this.getLength()){
 			let target = this.get(parseInt(pos));
 			this.#songs = [...this.#songs.slice(0, parseInt(pos)), ...this.#songs.slice(parseInt(pos) + 1)];
 			return target;
 		}
-		return null;
-	}
-
-	remove(pos){
-		return this.removeSongData(pos);
 	}
 }
