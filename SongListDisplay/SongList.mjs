@@ -55,7 +55,7 @@ export class SongList{
 					break;
 				
 				case typeof obj.list === "object":
-					this.#songs = [...(function*(){ for(let songObj of obj) yield new SongData(songObj) })()];
+					this.#songs = [...(function*(){ for(let songObj of obj.list) yield new SongData(songObj) })()];
 					break;
 	
 				case typeof obj.songs === "object":
