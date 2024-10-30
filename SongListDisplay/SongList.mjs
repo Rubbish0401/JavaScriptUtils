@@ -25,7 +25,7 @@ export class SongList{
 
 	constructor(obj){
 		if(obj instanceof SongList) obj = obj.toObject();
-		if(!isNaN(obj.startAt)) this.#startAt = obj.startAt;
+		if(obj && !isNaN(obj.startAt)) this.#startAt = obj.startAt;
 		this.importObject(obj);
 		this.setPosition(this.#startAt);
 
@@ -132,31 +132,28 @@ export class SongList{
 		let copy = [...before];
 		copy = [
 			...copy.slice(0, pos),
-			...songdata,
-			...this.#songs.slice(pos)
+			...songdata.filter(value => value instanceof SongData),
+			...copy.slice(pos)
 		];
+		this.importObject({ songs: copy });
 
 		let after = this.getAllSongs();
 		for(let action of this.#listener["songs-add"]) action({ target: this, before: before, after: after });
-		
-		if(!isNaN(pos)){
-			pos = Math.floor(pos);
-			if(pos < 0) pos = 0;
-			else if(pos > this.getLength()) pos = this.getLength();
-
-			this.#songs = [
-				...this.#songs.slice(0, pos),
-				...songdata,
-				...this.#songs.slice(pos)
-			];
-		}
+		for(let action of this.#listener["songs-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 
 	removeSongData(pos){
-		if(pos >= 0 && pos < this.getLength()){
-			let target = this.get(parseInt(pos));
-			this.#songs = [...this.#songs.slice(0, parseInt(pos)), ...this.#songs.slice(parseInt(pos) + 1)];
-			return target;
-		}
+		let before = this.getAllSongs();
+		
+		pos = Math.floor(pos);
+		let copy = [...before];
+		let target = this.getSongData(pos);
+		this.importObject({ songs: [...copy.slice(0, pos), ...copy.slice(1 + pos)]});
+
+		let after = this.getAllSongs();
+		for(let action of this.#listener["songs-remove"]) action({ target: this, position: pos, removed: target, before: before, after: after });
+		for(let action of this.#listener["songs-change"]) action({ target: this, before: before, after: after });
+		for(let action of this.#listener["global"]) action({ target: this });
 	}
 }
