@@ -42,16 +42,9 @@ export class SongData{
 		let before = this.toObject();
 
 		if(typeof obj === "object"){
-			switch(true){
-				case typeof obj.title === "string":
-					this.#title = obj.title;
-				
-				case typeof obj.descriptions === "string":
-					this.#descriptions = obj.descriptions;
-				
-				case typeof obj.creators === "object":
-					this.#creators = obj.creators.filter(value => typeof value === "string");
-			}
+			if(typeof obj.title === "string") this.#title = obj.title;
+			if(typeof obj.descriptions === "string") this.#descriptions = obj.descriptions;
+			if(typeof obj.creators === "object") this.#creators = obj.creators.filter(value => typeof value === "string");
 
 			let after = this.toObject();
 			for(let action of this.#listener["import"]) action({ target: this, before: before, after: after });

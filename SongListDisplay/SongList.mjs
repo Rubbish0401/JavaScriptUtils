@@ -44,20 +44,12 @@ export class SongList{
 
 	importObject(obj){
 		let before = this.toObject();
+		
 		if(typeof obj === "object"){
-			switch(true){
-				case typeof obj.name === "string":
-					this.#name = obj.name;
-				
-				case !isNaN(obj.postiion):
-					if(obj.pos >= 0 && obj < this.getLength()) this.#position = Math.floor(obj.position);
-				
-				case typeof obj.list === "object":
-					this.#songs = [...(function*(){ for(let songObj of obj.list) yield new SongData(songObj) })()];
-	
-				case typeof obj.songs === "object":
-					this.#songs = obj.songs.filter(value => value instanceof SongData);
-			}
+			if(typeof obj.name === "string") this.#name = obj.name;
+			if(!isNaN(obj.postiion) && obj.pos >= 0 && obj < this.getLength()) this.#position = Math.floor(obj.position);
+			if(typeof obj.list === "object") this.#songs = [...(function*(){ for(let songObj of obj.list) yield new SongData(songObj) })()];
+			if(typeof obj.songs === "object") this.#songs = obj.songs.filter(value => value instanceof SongData);
 
 			let after = this.toObject();
 			for(let action of this.#listener["import"]) action({ target: this, before: before, after: after });
