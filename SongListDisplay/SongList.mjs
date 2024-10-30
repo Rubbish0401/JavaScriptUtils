@@ -48,19 +48,15 @@ export class SongList{
 			switch(true){
 				case typeof obj.name === "string":
 					this.#name = obj.name;
-					break;
 				
 				case !isNaN(obj.postiion):
 					if(obj.pos >= 0 && obj < this.getLength()) this.#position = Math.floor(obj.position);
-					break;
 				
 				case typeof obj.list === "object":
 					this.#songs = [...(function*(){ for(let songObj of obj.list) yield new SongData(songObj) })()];
-					break;
 	
 				case typeof obj.songs === "object":
 					this.#songs = obj.songs.filter(value => value instanceof SongData);
-					break;
 			}
 
 			let after = this.toObject();

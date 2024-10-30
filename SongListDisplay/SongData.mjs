@@ -45,15 +45,12 @@ export class SongData{
 			switch(true){
 				case typeof obj.title === "string":
 					this.#title = obj.title;
-					break;
 				
 				case typeof obj.descriptions === "string":
 					this.#descriptions = obj.descriptions;
-					break;
 				
 				case typeof obj.creators === "object":
 					this.#creators = obj.creators.filter(value => typeof value === "string");
-					break;
 			}
 
 			let after = this.toObject();
