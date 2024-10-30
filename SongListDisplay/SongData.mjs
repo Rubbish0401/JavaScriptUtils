@@ -23,7 +23,7 @@ export class SongData{
 
 	constructor(obj){
 		if(obj instanceof SongData) obj = obj.toObject();
-		this.import(obj);
+		this.importObject(obj);
 	}
 
 	/* Static methods */
