@@ -149,4 +149,24 @@ export class SongList{
 		for(let action of this.#listener["songs-change"]) action({ target: this, before: before, after: after });
 		for(let action of this.#listener["global"]) action({ target: this });
 	}
+
+	//
+
+	addEventListener(key, ...actions){
+		if(Object.keys(this.#listener).includes(key)) this.#listener[key].push(...actions.filter(value => typeof value === "function"));
+	}
+
+	removeEventListener(key, ...actions){
+		if(Object.keys(this.#listener).includes(key)) {
+				for(let action of actions) if(Object.keys(this.#listener[key]).includes(action)){
+					let index = this.#listener[key].indexOf(action);
+					this.#listener[key].splice(index, 1);
+				}
+		}
+	}
+
+	clearEventListener(key){
+		if(Object.keys(this.#listener).includes(key))
+			this.#listener[key] = [];
+	}
 }
