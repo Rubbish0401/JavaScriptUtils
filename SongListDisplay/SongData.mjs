@@ -34,7 +34,7 @@ export class SongData{
 		return {
 			"title": this.#title,
 			"descriptions": this.#descriptions,
-			"creators": this.#creators,
+			"creators": JSON.parse(JSON.stringify(this.#creators)),
 		}
 	}
 

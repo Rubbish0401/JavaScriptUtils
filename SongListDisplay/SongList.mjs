@@ -88,6 +88,11 @@ export class SongList{
 		for(let action of this.#listener["position-change"]) action({ target: this, before: before, after: after });
 	}
 
+	shiftPosition(diff){
+		let len = this.getLength();
+		this.setPosition(((this.getPosition() + diff % len) + len) % len);
+	}
+
 	*getTitleList(){ for(let song of this.#songs) yield song.getTitle(); }
 
 	/* Songs */
